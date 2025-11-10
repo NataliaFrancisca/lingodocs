@@ -4,7 +4,7 @@ import br.com.nat.lingodocs.dto.auth.request.ConfirmSignUpRequest;
 import br.com.nat.lingodocs.dto.auth.response.MessageResponse;
 import br.com.nat.lingodocs.dto.auth.request.RefreshTokenRequest;
 import br.com.nat.lingodocs.dto.auth.request.SignUpRequest;
-import br.com.nat.lingodocs.service.CognitoAuthService;
+import br.com.nat.lingodocs.service.aws.CognitoAuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

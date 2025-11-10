@@ -1,4 +1,4 @@
-package br.com.nat.lingodocs.service;
+package br.com.nat.lingodocs.service.aws;
 
 import br.com.nat.lingodocs.dto.auth.response.AuthTokens;
 import org.springframework.beans.factory.annotation.Value;
