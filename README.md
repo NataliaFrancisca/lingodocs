@@ -51,13 +51,10 @@ A API fornece:
 ![imagem arquitetura do projeto](arquitetura-lingodocs.jpeg)
 
 ## Tecnologias Utilizadas
-Backend
 - Java
 - Spring Boot
 - JWT Authentication
-IA
 - Gemini API (Google)
-AWS
 - Amazon S3
 - Amazon Lambda
 - Amazon API Gateway
