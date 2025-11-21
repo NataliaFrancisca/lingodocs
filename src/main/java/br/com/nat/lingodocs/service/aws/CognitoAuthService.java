@@ -65,7 +65,7 @@ public class CognitoAuthService {
             SignUpResponse response = getCognitoClient().signUp(signUpRequestBuilder.build());
             return response.userSub();
         }catch (CognitoIdentityProviderException ex){
-            throw new RuntimeException("Erro ao registrar usuário: " + ex.awsErrorDetails());
+            throw new RuntimeException("Erro ao registrar usuário: " + ex.getMessage());
         }
     }
 
@@ -83,7 +83,7 @@ public class CognitoAuthService {
 
             getCognitoClient().confirmSignUp(confirmRequest.build());
         }catch (CognitoIdentityProviderException ex){
-            throw new RuntimeException("Erro ao confirmar usuário: " + ex.awsErrorDetails());
+            throw new RuntimeException("Erro ao confirmar usuário: " + ex.getMessage());
         }
     }
 
@@ -114,7 +114,7 @@ public class CognitoAuthService {
                     result.expiresIn()
             );
         } catch (CognitoIdentityProviderException  ex) {
-            throw new RuntimeException("Erro ao autenticar: " + ex.awsErrorDetails().errorMessage());
+            throw new RuntimeException("Erro ao autenticar: " + ex.getMessage());
         }
     }
 
