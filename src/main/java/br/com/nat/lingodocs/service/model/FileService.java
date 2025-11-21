@@ -1,6 +1,5 @@
 package br.com.nat.lingodocs.service.model;
 
-import br.com.nat.lingodocs.dto.bucket.FileRequest;
 import br.com.nat.lingodocs.dto.bucket.FileResponse;
 import br.com.nat.lingodocs.dto.bucket.FilesResponse;
 import br.com.nat.lingodocs.service.aws.S3Service;
@@ -24,7 +23,7 @@ public class FileService {
             System.out.println("calling from upload method");
             return this.s3Service.insert(file, originalFileName, username);
         }catch (Exception ex){
-            throw new RuntimeException("Erro ao tentar fazer upload do arquivo txt. " + ex.getMessage());
+            throw new RuntimeException("Erro ao tentar fazer upload do arquivo txt. ");
         }
     }
 
@@ -32,8 +31,8 @@ public class FileService {
         return this.s3Service.getAllFilesName(username);
     }
 
-    public FileResponse get(FileRequest fileRequest, String username){
-        return this.s3Service.get(fileRequest.name(), username);
+    public FileResponse get(String name, String username){
+        return this.s3Service.get(name, username);
     }
 
     private void validateTextFile(MultipartFile file){

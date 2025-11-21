@@ -35,7 +35,7 @@ public class HandleErros {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity handleError500(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " +ex.getLocalizedMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro: " + ex.getLocalizedMessage());
     }
 
 }

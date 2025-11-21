@@ -15,7 +15,7 @@ public class LambdaHandler implements RequestHandler<AwsProxyRequest, AwsProxyRe
         try {
             handler = SpringBootLambdaContainerHandler.getAwsProxyHandler(LingoDocsApplication.class);
         } catch (ContainerInitializationException ex) {
-            throw new RuntimeException("Não foi possível inicializar a aplicação Spring.", ex);
+            throw new RuntimeException("Não foi possível inicializar a aplicação Spring. ", ex);
         }
     }
 
