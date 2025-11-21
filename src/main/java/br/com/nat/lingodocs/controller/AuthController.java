@@ -21,7 +21,7 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/sigup")
+    @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequest request){
         try{
             String userSub = authService.signUp(
@@ -37,7 +37,7 @@ public class AuthController {
     @PostMapping("/confirm")
     public ResponseEntity<?> confirmSignUp(@RequestBody ConfirmSignUpRequest request){
         try{
-            authService.confirmSignUp(request.email(), request.code());
+            authService.confirmSignUp(request.email(), request.token());
             return ResponseEntity.ok(new MessageResponse("Usuário confirmado com sucesso.", null));
         }catch (Exception ex){
             return ResponseEntity.badRequest().body(new MessageResponse(ex.getMessage(), null));
