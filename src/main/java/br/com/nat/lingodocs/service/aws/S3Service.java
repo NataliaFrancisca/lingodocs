@@ -5,7 +5,6 @@ import br.com.nat.lingodocs.dto.bucket.FilesResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -24,14 +23,24 @@ import java.util.NoSuchElementException;
 public class S3Service {
     @Value("${aws.s3.bucket.name}")
     private String BUCKET_NAME;
+    private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
-    private final S3Client s3 = S3Client.builder().region(Region.US_EAST_1).build();
+    public S3Service(){
+        this.s3Client = S3Client.builder()
+                .region(Region.US_EAST_1)
+                .build();
+
+        this.s3Presigner = S3Presigner.builder()
+                .region(Region.US_EAST_1)
+                .build();
+    }
 
     public String insert(MultipartFile file, String fileName, String username){
         try{
             String outputFileName = "inbound/" + username + "/" + fileName;
 
-            s3.putObject(PutObjectRequest.builder()
+            s3Client.putObject(PutObjectRequest.builder()
                             .bucket(this.BUCKET_NAME)
                             .key(outputFileName)
                             .contentType("text/plain; charset=utf-8")
@@ -42,7 +51,7 @@ public class S3Service {
 
             return outputFileName;
         }catch (S3Exception ex){
-            throw new RuntimeException("Erro ao tentar adicionar o arquivo txt no bucket: " + ex.awsErrorDetails());
+            throw new RuntimeException("Erro ao tentar adicionar o arquivo txt no bucket.");
         } catch (IOException e) {
             throw new RuntimeException("Erro ao tentar válidar o arquivo txt.");
         }
@@ -57,7 +66,7 @@ public class S3Service {
                     .prefix(prefix)
                     .build();
 
-            var listObjects = s3.listObjectsV2(request);
+            var listObjects = s3Client.listObjectsV2(request);
 
             var response = listObjects.contents().stream()
                     .map(S3Object::key)
@@ -70,7 +79,7 @@ public class S3Service {
 
             return new FilesResponse(response);
         }catch (S3Exception ex){
-            throw new RuntimeException("Erro ao tentar listar os arquivos disponíveis para você. " + ex.awsErrorDetails());
+            throw new RuntimeException("Erro ao tentar listar os arquivos disponíveis para você.");
         }
     }
 
@@ -91,6 +100,8 @@ public class S3Service {
             GetObjectRequest getObject = GetObjectRequest.builder()
                     .bucket(this.BUCKET_NAME)
                     .key(key)
+                    .responseContentDisposition("attachment; filename=\"" + file + "\"")
+                    .responseContentType("application/octet-stream")
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
@@ -99,11 +110,11 @@ public class S3Service {
                     .build();
 
             PresignedGetObjectRequest presignedRequest =
-                    this.s3Presigner().presignGetObject(presignRequest);
+                    this.s3Presigner.presignGetObject(presignRequest);
 
             return new FileResponse(file, presignedRequest.url().toString());
         }catch (S3Exception ex){
-            throw new RuntimeException("Erro ao tentar gerar URL para o arquivo: " + ex.awsErrorDetails());
+            throw new RuntimeException("Erro ao tentar gerar URL para o arquivo.");
         }
     }
 
@@ -114,20 +125,13 @@ public class S3Service {
                     .key(key)
                     .build();
 
-            s3.headObject(req);
+            s3Client.headObject(req);
             return true;
         }catch (S3Exception ex){
             if (ex.statusCode() == 404){
                 return false;
             }
-            throw new RuntimeException("Erro ao acessar S3: " + ex.getMessage());
+            throw new RuntimeException("Erro ao acessar S3");
         }
-    }
-
-    private S3Presigner s3Presigner(){
-        return S3Presigner.builder()
-                .region(Region.US_EAST_1)
-                .credentialsProvider(ProfileCredentialsProvider.create("default"))
-                .build();
     }
 }
